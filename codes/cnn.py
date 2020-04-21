@@ -36,7 +36,7 @@ model.add(Dropout(0.3))
 
 # Step 3 - Flattening
 model.add(Flatten())#no pars ,it flattens the previous layer
-
+'''
 # Step 4 - Full connection
 model.add(Dense(units = 128, activation = 'relu')) #128 is up for exp/tion ,units=output dimension
 #model.add(Dense(units = 64, activation = 'relu'))
@@ -44,12 +44,12 @@ model.add(Dropout(0.5))
 #model.add(Dense(units = 64, activation = 'relu'))
 model.add(Dense(units = 1, activation = 'sigmoid')) #output layer,sigmoid->binary outcome, else softmax
 '''
-classifier.add(Dense(units=64, activation='relu'))
-classifier.add(Dropout(0.5))
-classifier.add(Dense(units=64, activation='relu'))
-classifier.add(Dense(units=1, activation='sigmoid'))
+model.add(Dense(units=64, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(units=64, activation='relu'))
+model.add(Dense(units=1, activation='sigmoid'))
 
-'''
+
 # Compiling the CNN
 model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
 
