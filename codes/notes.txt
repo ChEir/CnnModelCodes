@@ -1,3 +1,0 @@
-prob with generator ,model.fit is used from them 
-i used model.fit_generator 
-
