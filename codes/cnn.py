@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar  6 10:38:39 2019
-
-@author: Rena
-"""
-
 """
 Created on Sun Feb 10 16:01:36 2019
 
@@ -20,23 +13,9 @@ from keras.layers import Flatten
 from keras.layers import Dense
 from keras.preprocessing.image import ImageDataGenerator
 import numpy as np 
-'''
-for cannot import img_as_float error 
-
-from numpy.lib.arraypad import _as_pairs
-from numpy.lib.arraypad import _validate_lengths
- 
-'''
-from distutils.version import LooseVersion as Version
-old_numpy = Version(np.__version__) < Version('1.16')
-if old_numpy:
-    from numpy.lib.arraypad import _validate_lengths
-else:
-    from numpy.lib.arraypad import _as_pairs
-
 from keras.preprocessing import image
 from keras.layers import Dropout
-
+from keras import backend as K
 import shap
 
 # Initialising the CNN
@@ -88,13 +67,34 @@ test_set = test_datagen.flow_from_directory('C:/Users/Rena/Desktop/Sxolh/Πτυ�
                                             batch_size = 32,
                                             class_mode = 'binary')
 model.summary()
+
+#for shap implementation 
+
+if K.image_data_format() == 'channels_first':
+    training_set = training_set.reshape(training_set.shape[0], 1, img_rows, img_cols)
+    test_set = test_set.reshape(test_set.shape[0], 1, img_rows, img_cols)
+    input_shape = (1, img_rows, img_cols)
+else:
+    training_set = training_set.reshape(training_set.shape[0], img_rows, img_cols, 1)
+    test_set = test_set.reshape(test_set.shape[0], img_rows, img_cols, 1)
+    input_shape = (img_rows, img_cols, 1)
+
+# select a set of background examples to take an expectation over
+background = training_set[np.random.choice(training_set.shape[0], 100, replace=False)]
+# explain predictions of the model on four images
+e = shap.DeepExplainer(model, background)
+
+shap_values = e.shap_values(x_test[1:5])
+
+# plot the feature attributions
+shap.image_plot(shap_values, -x_test[1:5])
+
 model.fit_generator( training_set, 
                      steps_per_epoch = 465,
                      epochs = 4, 
                      validation_data = test_set,
                      validation_steps = 233) 
 
-
-#importing SHAP 
-
-import shap
+score = model.evaluate(test_set, test_set, verbose=0)
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
