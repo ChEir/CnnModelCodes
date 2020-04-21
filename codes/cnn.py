@@ -15,8 +15,6 @@ from keras.preprocessing.image import ImageDataGenerator
 import numpy as np 
 from keras.preprocessing import image
 from keras.layers import Dropout
-from keras import backend as K
-import shap
 
 # Initialising the CNN
 model = Sequential() 
@@ -67,34 +65,48 @@ test_set = test_datagen.flow_from_directory('C:/Users/Rena/Desktop/Sxolh/Πτυ�
                                             batch_size = 32,
                                             class_mode = 'binary')
 model.summary()
-
-#for shap implementation 
-
-if K.image_data_format() == 'channels_first':
-    training_set = training_set.reshape(training_set.shape[0], 1, img_rows, img_cols)
-    test_set = test_set.reshape(test_set.shape[0], 1, img_rows, img_cols)
-    input_shape = (1, img_rows, img_cols)
-else:
-    training_set = training_set.reshape(training_set.shape[0], img_rows, img_cols, 1)
-    test_set = test_set.reshape(test_set.shape[0], img_rows, img_cols, 1)
-    input_shape = (img_rows, img_cols, 1)
-
-# select a set of background examples to take an expectation over
-background = training_set[np.random.choice(training_set.shape[0], 100, replace=False)]
-# explain predictions of the model on four images
-e = shap.DeepExplainer(model, background)
-
-shap_values = e.shap_values(x_test[1:5])
-
-# plot the feature attributions
-shap.image_plot(shap_values, -x_test[1:5])
-
 model.fit_generator( training_set, 
                      steps_per_epoch = 465,
                      epochs = 4, 
                      validation_data = test_set,
                      validation_steps = 233) 
+#shap 
+model.fit(x=None,
+    y=None, batch_size=None, epochs=1, verbose=1, callbacks=None, validation_split=0.0, validation_data=None, shuffle=True, class_weight=None, sample_weight=None, initial_epoch=0, steps_per_epoch=None, validation_steps=None, validation_freq=1)
 
-score = model.evaluate(test_set, test_set, verbose=0)
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
+model.fit(train_datagen,training_set,
+          batch_size=32,
+          epochs=4,
+          verbose=1,
+          validation_data=(test_datagen,test_set))
+
+import shap 
+
+# select a set of background examples to take an expectation over
+background = training_set[np.random.choice(training_set[0], 100, replace=False)]
+
+# explain predictions of the model on three images
+e = shap.DeepExplainer(model, background)
+# ...or pass tensors directly
+# e = shap.DeepExplainer((model.layers[0].input, model.layers[-1].output), background)
+shap_values = e.shap_values(test_set[1:5])
+
+# plot the feature attributions
+shap.image_plot(shap_values, -test_set[1:5])
+
+
+#try shit_2 kerne l expl
+
+kernel_explainer = shap.KernelExplainer(model.predict, training_set[:10])
+kernel_shap_values = kernel_explainer.shap_values(test_set[:1])
+
+x_test_words = prepare_explanation_words(model,test_set)
+y_pred = model.predict(test_set[:1])
+print('Actual Category: %s, Predict Category: %s' % (y_test[0], y_pred[0]))
+
+shap.force_plot(kernel_explainer.expected_value[0], kernel_shap_values[0][0], x_test_words[0])
+
+#try shit DEEP SHAP
+
+explainer = shap.DeepExplainer(model, training_set[:10])
+
