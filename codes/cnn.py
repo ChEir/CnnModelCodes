@@ -28,11 +28,11 @@ model.add(MaxPooling2D(pool_size = (2, 2)))
 #2nd layer
 model.add(Conv2D(32, (3, 3), activation = 'relu'))
 model.add(MaxPooling2D(pool_size = (2, 2)))
-
+'''
 #3rd layer 
 model.add(Conv2D(64, (3, 3), activation = 'relu'))
 model.add(MaxPooling2D(pool_size = (2, 2)))
-'''
+
 #for 6th model:
 model.add(Dropout(0.3))
 '''
@@ -41,7 +41,7 @@ model.add(Flatten())#no pars ,it flattens the previous layer
 
 # Step 4 - Full connection
 model.add(Dense(units = 128, activation = 'relu')) #128 is up for exp/tion ,units=output dimension
-#model.add(Dense(units = 64, activation = 'relu'))
+model.add(Dense(units = 64, activation = 'relu'))
 #model.add(Dropout(0.5))
 #model.add(Dense(units = 64, activation = 'relu'))
 model.add(Dense(units = 1, activation = 'sigmoid')) #output layer,sigmoid->binary outcome, else softmax
