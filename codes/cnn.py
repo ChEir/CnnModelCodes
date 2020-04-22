@@ -33,6 +33,13 @@ model.add(MaxPooling2D(pool_size = (2, 2)))
 model.add(Conv2D(64, (3, 3), activation = 'relu'))
 model.add(MaxPooling2D(pool_size = (2, 2)))
 
+#4th layer
+model.add(Conv2D(64, (3, 3), activation = 'relu'))
+model.add(MaxPooling2D(pool_size = (2, 2)))
+#5th layer
+model.add(Conv2D(128, (3, 3), activation = 'relu'))
+model.add(MaxPooling2D(pool_size = (2, 2)))
+
 #for 6th model
 model.add(Dropout(0.3))
 
@@ -55,12 +62,12 @@ train_datagen = ImageDataGenerator(rescale = 1./255,
 
 test_datagen = ImageDataGenerator(rescale = 1./255) 
 
-training_set = train_datagen.flow_from_directory('C:/Users/Rena/Desktop/Sxolh/Πτυχιακη/data/train',
+training_set = train_datagen.flow_from_directory('C:/Users/Rena/Desktop/Sxolh/Πτυχιακη/Step_1/data/train',
                                                  target_size = (128, 128),
                                                  batch_size = 32,
                                                  class_mode = 'binary') 
 
-test_set = test_datagen.flow_from_directory('C:/Users/Rena/Desktop/Sxolh/Πτυχιακη/data/test',
+test_set = test_datagen.flow_from_directory('C:/Users/Rena/Desktop/Sxolh/Πτυχιακη/Step_1/data/test',
                                             target_size = (128, 128),
                                             batch_size = 32,
                                             class_mode = 'binary')
