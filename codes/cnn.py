@@ -40,15 +40,17 @@ model.add(MaxPooling2D(pool_size = (2, 2)))
 model.add(Conv2D(128, (3, 3), activation = 'relu'))
 model.add(MaxPooling2D(pool_size = (2, 2)))
 
-#for 6th model
-model.add(Dropout(0.3))
+
 
 #Flattening
 model.add(Flatten())#no pars ,it flattens the previous layer
 
 #Full connection
 model.add(Dense(units = 128, activation = 'relu')) #unis =output dimension
+
 model.add(Dropout(0.5))
+model.add(Dense(units = 128, activation = 'relu')) #unis =output dimension
+
 model.add(Dense(units = 1, activation = 'sigmoid')) #final layer,sigmoid->binary outcome
 # Compiling the CNN
 model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
